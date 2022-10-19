@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import mmap
 import concurrent
-from torch.utils import data
+from torch.utils.data import Dataset
 import pickle
 from pathlib import Path
 from tqdm import tqdm
@@ -17,7 +17,7 @@ from PIL import Image
 import time
 
 # Does this work with other block_sizes? doesn't seem to.
-class FbDataset(data.Dataset):
+class FbDataset(Dataset):
     def __init__(self, block_size, map_file, max_samples=None, skip=0):
         self.npz = np.memmap(map_file, mode="r", dtype="uint16").reshape((-1, block_size))
         self.samples = self.npz.shape[0]
@@ -33,7 +33,7 @@ class FbDataset(data.Dataset):
         data = torch.tensor(self.npz[nth].astype(np.int64))
         return (data[:-1], data[1:])
 
-class ShardedDataset(data.Dataset):
+class ShardedDataset(Dataset):
     def __init__(self, block_size, map_file, world_size=1, rank=0, skip=0):
         self.npz = np.memmap(map_file, mode="r", dtype="uint16").reshape((-1, block_size))
         #might want to pad later
@@ -282,8 +282,13 @@ class BucketManager:
         while self.batch_delivered < self.batch_total:
             yield self.get_batch()
 
-class ShardedImageDataset(data.Dataset):
-    def __init__(self, dataset_path: str, name:str, index_path:str=None, shuffle=False, metadata_path=None, threads=None, inner_transform=None,
+def inner_transform(data):
+    data = CPUTransforms.scale(data, 512)
+    data = CPUTransforms.randomcrop(data, 512)
+    return data
+
+class ShardedImageDataset(Dataset):
+    def __init__(self, dataset_path: str, tags_db:str, name:str, index_path:str=None, shuffle=False, metadata_path=None, threads=None, inner_transform=inner_transform,
         outer_transform=None, skip=0, bsz=256, world_size=1, local_rank=0, global_rank=0, resolution_pkl=None, max_size=(640,512), bucket_seed=69, res_dropout=0.0, device="cpu"):
         self.skip = skip
         self.threads = threads
@@ -298,6 +303,8 @@ class ShardedImageDataset(data.Dataset):
             self.index_path = self.dataset_path / f"{name}.index"
         else:
             self.index_path = Path(index_path)
+        with open(tags_db, "rb") as f:
+            self.db_tags = pickle.load(f)
             
         self.pointer_path = self.dataset_path / f"{name}.pointer"
         self.dataset_path = self.dataset_path / f"{name}.ds"
@@ -395,7 +402,12 @@ class ShardedImageDataset(data.Dataset):
         if self.outer_transform:
             tensors = self.outer_transform(tensors)
             
-        return tensors, ids
+        # return tensors, ids
+        captions = []
+        for id in ids:
+            caption = self.db_tags[id.item()]
+            captions.append(caption)
+        return {"image": tensors, "txt": captions}
 
     def read_from_index_key(self, key):
         offset, size, id = self.index[key]
@@ -752,11 +764,6 @@ class ImageDatasetBuilder():
         #close the dataset filehandle and dump the pickle index
         self.flush()
         self.dataset.close()
-
-def inner_transform(data):
-    data = CPUTransforms.scale(data, 512)
-    data = CPUTransforms.randomcrop(data, 512)
-    return data
 
 if __name__ == "__main__":
     import argparse

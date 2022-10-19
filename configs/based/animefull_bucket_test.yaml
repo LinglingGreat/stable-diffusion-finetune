@@ -1,0 +1,43 @@
+ucg_data_path_DISABLED: /ssdwork/liling/sd-private/stable-diffusion-private/dataset/700kdanbooru
+ucg_freq_DISABLED: 15
+ucg_bsz_DISABLED: 4
+max_clip_contexts: 3
+# data_path: /mnt/storageserver/workspace/kuru/sdfinetune/dataset/fulldanbooru
+data_path: /ssdwork/liling/sd-private/stable-diffusion-private/danbooru
+tags_db: /ssdwork/liling/sd-private/stable-diffusion-private/danbooru/db_tags_ranked.pkl
+# bucket_path: /mnt/storageserver/workspace/kuru/sdfinetune/db_sizes.pkl
+bucket_path: /ssdwork/liling/sd-private/stable-diffusion-private/danbooru/e621_sizes.pkl
+bucket_max_size_w: 512
+bucket_max_size_h: 768
+bucket_seed: 6974
+index_path: null
+# index_path: /ssdwork/liling/sd-private/stable-diffusion-private/danbooru/e621.index
+# model_path: /data/xinchen/novelaileak/stableckpt/extra-sd-prune/sd-prune/anime700k-64bs-0.1ucg-penultimate-1epoch-clip-ema-continue-76000.pt
+model_path: /data/xinchen/novelaileak/stableckpt/animefull-latest/model.ckpt
+config_path: /data/xinchen/novelaileak/stableckpt/animefull-latest/config.yaml
+save_path: /ssdwork/liling/sd-private/stable-diffusion-private/checkpoints/test
+do_save: true
+run_name: animefull-64bs-0.0ucg-penultimate-clip-5epoch-24-70prompt-continue-nocrop-longfix
+no_ucg_tags: lowres censored worst_quality low_quality normal_quality jpeg_artifacts error bad_anatomy bad_hands bad_leg bad_feet
+lr: 1e-5
+end_lr: 5e-6
+warmup_steps: 100
+anneal_steps: 370000
+bs: 4
+gas: 2
+seed: 691
+save_every: 2000
+amp: false
+loss_scale: false
+cast_to: float16
+sample_every: 500
+beta1: 0.95
+beta2: 0.999
+eps: 1e-8
+weight_decay: 0.0
+use_ema: true
+ucg: 0.0
+min_tags: 24
+max_tags: 70
+mode: basedformer
+epoch: 5
