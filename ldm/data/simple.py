@@ -1,3 +1,4 @@
+import glob
 import numpy as np
 import torch
 from torch.utils.data import Dataset
@@ -49,6 +50,51 @@ class FolderData(Dataset):
         data = {"image": im}
         if self.captions is not None:
             data["txt"] = caption
+        return data
+
+    def process_im(self, im):
+        im = im.convert("RGB")
+        return self.tform(im)
+
+class FolderDataLocal(Dataset):
+    def __init__(self, root_dir, image_transforms=[]) -> None:
+        # self.root_dir = Path(root_dir)
+        self.root_dir = root_dir
+        self.default_caption = ""
+
+        ext = ['png', 'jpg', 'jpeg', 'bmp']
+        self.paths = []
+        # img_path = Path(f'{self.root_dir}/img/')
+        # [self.paths.extend(list(img_path.rglob(f"*.{e}"))) for e in ext]
+        [self.paths.extend(glob.glob(f'{self.root_dir}/img/' + '*.' + e)) for e in ext]
+        self.captions = []
+        for i in self.paths:
+            hash = i[len(f'{self.root_dir}/img/'):].split('.')[0]
+            self.captions.append(f'{self.root_dir}/txt/{hash}.txt')
+
+        image_transforms = [instantiate_from_config(tt) for tt in image_transforms]
+        image_transforms.extend([transforms.ToTensor(),
+                                 transforms.Lambda(lambda x: rearrange(x * 2. - 1., 'c h w -> h w c'))])
+        image_transforms = transforms.Compose(image_transforms)
+        self.tform = image_transforms
+
+        # assert all(['full/' + str(x.name) in self.captions for x in self.paths])
+
+    def __len__(self):
+        if self.captions is not None:
+            return len(self.captions)
+        else:
+            return len(self.paths)
+
+    def __getitem__(self, index):
+        chosen = self.captions[index]
+        with open(chosen, 'rt') as f:
+            caption = f.read()
+        caption = caption.strip('\n')
+        im = Image.open(self.paths[index])
+
+        im = self.process_im(im)
+        data = {"image": im, "txt": caption}
         return data
 
     def process_im(self, im):
