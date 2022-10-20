@@ -28,6 +28,9 @@ image_ids = list(range(len(all_image)))
 
 for i, image_path in enumerate(all_image):
     img = Image.open(image_path)
+    # data = Image.open(io.BytesIO(data))
+    # mode = data.mode
+    # data = np.asarray(data)
     # print(img.size, img.format, img.width, img.height)
     bucket_data[image_ids[i]] = [img.width, img.height]
 
@@ -47,17 +50,19 @@ def encode_op(file_path):
 
     if simplejpeg.is_jpeg(data):
         try:
-            simplejpeg.decode(data)
-        except:
-            print("jpeg", file_path)
+            simplejpeg.decode_jpeg(data)
+        except Exception as e:
+            print("jpeg", file_path, str(e))
             return None
     else:
         try:
             data = Image.open(io.BytesIO(data))
+            data = data.convert("RGB")
+            mode = data.mode
             data = np.asarray(data)
-            data = simplejpeg.encode_jpeg(data, quality=91)
-        except:
-            print("nojpeg", file_path)
+            data = simplejpeg.encode_jpeg(data, quality=91, colorspace=mode)
+        except Exception as e:
+            print("nojpeg", file_path, str(e))
             return None
 
     return data

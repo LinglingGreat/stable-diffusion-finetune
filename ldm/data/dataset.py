@@ -203,6 +203,13 @@ class BucketManager:
                 if len(self.epoch[bucket_id]) == 0:
                     del self.epoch[bucket_id]
 
+        bucket_ids = list(self.epoch.keys())
+        resolution = dict()
+        for k in bucket_ids:
+            resolution[k] = self.resolutions[k]
+        bucket_num = {k:len(v) for k, v in self.epoch.items()}
+        print(f"All bucket resolution: {resolution}")
+        print(f"All bucket num: {bucket_num}")
         if self.debug:
             timer = time.perf_counter() - timer
             count = 0
@@ -724,6 +731,7 @@ class ImageDatasetBuilder():
         self.metadata[id] = metadata
 
     def flush_index(self, silent=False):
+        print("index len", len(self.index))
         if not self.index and not silent:
             print("Warning: Index not built, couldn't flush")
             return

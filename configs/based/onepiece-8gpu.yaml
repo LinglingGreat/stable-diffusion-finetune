@@ -77,7 +77,7 @@ data:
     num_val_workers: 0 # Avoid a weird val dataloader issue
     epoch: 5
     train:
-      target: ldm.data.simple.ShardedImageDataset
+      target: ldm.data.dataset.ShardedImageDataset
       params:
         dataset_path: /data/liling_ssdwork/stable-diffusion/datasets/onepiece
         tags_db: /data/liling_ssdwork/stable-diffusion/datasets/onepiece/db_tags_ranked.pkl
@@ -86,7 +86,9 @@ data:
         name: onepiece
         shuffle: False
         threads: 8
-        max_size: (512, 768)
+        gas: 2
+        bucket_max_size_w: 768
+        bucket_max_size_h: 768
         res_dropout: 0.0
         bucket_seed: 6974
     validation:

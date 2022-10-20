@@ -51,7 +51,7 @@ def get_parser(**parser_kwargs):
         "--finetune_from",
         type=str,
         nargs="?",
-        default="",
+        default="/ssdwork/liling/models/stable-diffusion/sd-v1-4-full-ema.ckpt",
         help="path to checkpoint to load model state from"
     )
     parser.add_argument(
@@ -79,7 +79,7 @@ def get_parser(**parser_kwargs):
         metavar="base_config.yaml",
         help="paths to base configs. Loaded from left-to-right. "
              "Parameters can be overwritten or added with command-line options of the form `--key value`.",
-        default=list(),
+        default=["configs/based/onepiece-8gpu.yaml"],
     )
     parser.add_argument(
         "-t",
@@ -208,12 +208,15 @@ class DataModuleFromConfig(pl.LightningDataModule):
         world_size, rank = _get_distributed_settings()
         global_rank = rank
         if train is not None:
-            train["params"]["bsz"] = batch_size * 2
+            train["params"]["bsz"] = batch_size * train["params"]["gas"]
             # train["params"]["inner_transform"] = inner_transform
             train["params"]["world_size"] = world_size
             train["params"]["local_rank"] = rank
             train["params"]["global_rank"] = global_rank
-            train["params"]["max_size"] = (512, 768)
+            train["params"]["max_size"] = (train["params"]["bucket_max_size_w"], train["params"]["bucket_max_size_h"])
+            del train["params"]["bucket_max_size_w"]
+            del train["params"]["bucket_max_size_h"]
+            del train["params"]["gas"]
             self.dataset_configs["train"] = train
             self.train_dataloader = self._train_dataloader
         if validation is not None:
