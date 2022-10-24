@@ -2,7 +2,7 @@ import argparse
 from argparse import Namespace
 from huggingface_hub import Repository, create_repo
 
-from scripts.convert_sd_to_diffusers import main
+from convert_sd_to_diffusers import main
 
 # python scripts/convert_and_push_to_hub.py \
 # --checkpoint_path "logs/2022-09-02T06-46-25_pokemon_pokemon/checkpoints/epoch=000142.ckpt" \

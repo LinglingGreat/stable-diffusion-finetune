@@ -195,6 +195,7 @@ def main():
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     model = model.to(device)
+    suffix = opt.ckpt.split(".")[0][-3:]
 
     if opt.plms:
         sampler = PLMSSampler(model)
@@ -259,7 +260,7 @@ def main():
                             for x_sample in x_samples_ddim:
                                 x_sample = 255. * rearrange(x_sample.cpu().numpy(), 'c h w -> h w c')
                                 Image.fromarray(x_sample.astype(np.uint8)).save(
-                                    os.path.join(sample_path, f"{base_count:05}.png"))
+                                    os.path.join(sample_path, f"{base_count:05}_{suffix}.png"))
                                 base_count += 1
                         all_samples.append(x_samples_ddim)
 
@@ -271,7 +272,7 @@ def main():
 
                     # to image
                     grid = 255. * rearrange(grid, 'c h w -> h w c').cpu().numpy()
-                    Image.fromarray(grid.astype(np.uint8)).save(os.path.join(outpath, f'grid-{grid_count:04}.png'))
+                    Image.fromarray(grid.astype(np.uint8)).save(os.path.join(outpath, f'grid-{grid_count:04}_{suffix}.png'))
                     grid_count += 1
 
                 toc = time.time()

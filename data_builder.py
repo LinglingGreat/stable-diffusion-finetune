@@ -8,9 +8,14 @@ from PIL import Image
 import numpy as np
 import pickle
 
-data_dir = "/ssdwork/linzhihang/one_piece"
-output_path = "datasets/onepiece"
-name = "onepiece"
+# data_dir = "/ssdwork/linzhihang/one_piece"
+# output_path = "datasets/onepiece"
+# name = "onepiece"
+
+data_dir = "/ssdwork/liling/midjourney"
+output_path = "datasets/midjourney"
+name = "midjourney"
+
 bucket_path = output_path + "/db_sizes.pkl"
 tag_path = output_path + "/db_tags_ranked.pkl"
 ext = ['png', 'jpg', 'jpeg', 'bmp']
