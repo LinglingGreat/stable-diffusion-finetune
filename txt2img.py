@@ -195,7 +195,7 @@ def main():
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     model = model.to(device)
-    suffix = opt.ckpt.split(".")[0][-3:]
+    suffix = opt.ckpt.split(".")[0][-6:]
 
     if opt.plms:
         sampler = PLMSSampler(model)

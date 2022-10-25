@@ -2,8 +2,9 @@
 TIME_STAMP=`date "+%Y%m%d-%H%M"`
 LOG_FILE="logs/${TIME_STAMP}.log"
 CKPT_PATH="/ssdwork/liling/models/stable-diffusion/sd-v1-4-full-ema.ckpt"
-CONFIG_PATH="configs/based/midjourney-8gpu.yaml"
+# CONFIG_PATH="configs/based/midjourney-8gpu.yaml"
 # CONFIG_PATH="configs/based/onepiece-8gpu_origin.yaml"
+CONFIG_PATH="configs/based/laionart-8gpu.yaml"
 nohup python main_bucket.py \
     -t \
     --base $CONFIG_PATH \
