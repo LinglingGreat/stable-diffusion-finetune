@@ -3,6 +3,22 @@ from torch import autocast
 from diffusers import StableDiffusionPipeline, DDIMScheduler
 import os
 
+def image_gen(prompt, postfix):
+    for i in range(1):
+        height=576
+        width=1024
+        with autocast("cuda"):
+            image = pipe(prompt, guidance_scale=7.5, height=height, width=width)["sample"][0]  
+            
+        image.save(os.path.join(output_path, f"{prompt}{postfix}_{height}x{width}{str(i)}.png"))
+
+        height=1024
+        width=576
+        with autocast("cuda"):
+            image = pipe(prompt, guidance_scale=7.5, height=height, width=width)["sample"][0]  
+            
+        image.save(os.path.join(output_path, f"{prompt}{postfix}_{height}x{width}{str(i)}.png"))
+
 device = "cuda"
 
 model_id="logs/2022-10-21T17-14-25_midjourney-8gpu/train192"
@@ -21,8 +37,9 @@ model_id="logs/2022-10-24T14-24-10_laionart-8gpu/train0"
 output_path = "outputs/generated_laion_0"
 postfix = ""
 
-# model_id="/ssdwork/image_gen/stable-diffusion-v1-4"
-# postfix = "_sd"
+model_id="/ssdwork/image_gen/stable-diffusion-v1-4"
+output_path = "outputs/generated_sd"
+postfix = ""
 
 os.makedirs(output_path, exist_ok=True)
 
@@ -35,17 +52,24 @@ prompt = "a beautiful girl"
 # prompt = "a dog"
 prompt = "beautiful rapunzel, wedding dress, beautiful face, intricate, highly detailed, 8k, textured, sharp focus, art by artgerm and greg rutkowski and alphonse mucha"
 
-for i in range(1):
-    height=576
-    width=1024
-    with autocast("cuda"):
-        image = pipe(prompt, guidance_scale=7.5, height=height, width=width)["sample"][0]  
-        
-    image.save(os.path.join(output_path, f"{prompt}{postfix}_{height}x{width}{str(i)}.png"))
+image_gen(prompt, postfix)
 
-    height=1024
-    width=576
-    with autocast("cuda"):
-        image = pipe(prompt, guidance_scale=7.5, height=height, width=width)["sample"][0]  
-        
-    image.save(os.path.join(output_path, f"{prompt}{postfix}_{height}x{width}{str(i)}.png"))
+# ckpt_path = "logs/2022-10-25T14-02-19_laionart-8gpu/trans"
+# output_path = "outputs/generated_laion_1025"
+# os.makedirs(output_path, exist_ok=True)
+# model_list = os.listdir(ckpt_path)
+
+# for model_name in model_list:
+#     postfix = model_name
+#     model_id = os.path.join(ckpt_path, model_name)
+#     pipe = StableDiffusionPipeline.from_pretrained(
+#     model_id, use_auth_token=True
+#     )
+#     pipe = pipe.to(device)
+
+#     prompt = "a beautiful girl"
+#     # prompt = "a dog"
+#     prompt = "beautiful rapunzel, wedding dress, beautiful face, intricate, highly detailed, 8k, textured, sharp focus, art by artgerm and greg rutkowski and alphonse mucha"
+
+#     image_gen(prompt, postfix)
+

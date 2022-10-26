@@ -23,14 +23,14 @@ config='configs/based/laionart-8gpu.yaml'
 #     --config $config \
 #     --ckpt $ckpt
 
-outputdir='outputs/generated_laionart'
+outputdir='outputs/generated_laionartv2'
 config='configs/based/laionart-8gpu.yaml'
-ckpt_path="logs/2022-10-24T14-24-10_laionart-8gpu/checkpoints"
+ckpt_path="logs/2022-10-25T14-02-19_laionart-8gpu/checkpoints"
 for ckpt in `find $ckpt_path -type f`
 do  
 echo $ckpt
 python txt2img.py \
-    --prompt 'a beautiful girl' \
+    --prompt "beautiful rapunzel, wedding dress, beautiful face, intricate, highly detailed, 8k, textured, sharp focus, art by artgerm and greg rutkowski and alphonse mucha" \
     --outdir $outputdir \
     --H 576 --W 1024 \
     --n_samples 4 \
