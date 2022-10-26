@@ -296,7 +296,8 @@ def inner_transform(data):
 
 class ShardedImageDataset(Dataset):
     def __init__(self, dataset_path: str, tags_db:str, name:str, index_path:str=None, shuffle=False, metadata_path=None, threads=None, inner_transform=inner_transform,
-        outer_transform=None, skip=0, bsz=256, world_size=1, local_rank=0, global_rank=0, resolution_pkl=None, max_size=(640,512), bucket_seed=69, res_dropout=0.0, device="cpu"):
+        outer_transform=None, skip=0, bsz=256, world_size=1, local_rank=0, global_rank=0, resolution_pkl=None, max_size=(640,512), min_dim=256, dim_limit=1024, divisible=64,
+        bucket_seed=69, res_dropout=0.0, device="cpu"):
         self.skip = skip
         self.threads = threads
         self.bsz = bsz
@@ -325,7 +326,8 @@ class ShardedImageDataset(Dataset):
         self.bucket_manager = None
         if resolution_pkl is not None:
             valid_ids = list(np.array(self.index)[:, 2])
-            self.bucket_manager = BucketManager(resolution_pkl, max_size=max_size, valid_ids=valid_ids, bsz=bsz, world_size=world_size, global_rank=global_rank, seed=bucket_seed, res_dropout=res_dropout)
+            self.bucket_manager = BucketManager(resolution_pkl, min_dim=min_dim, dim_limit=dim_limit, max_size=max_size, divisible=divisible,
+            valid_ids=valid_ids, bsz=bsz, world_size=world_size, global_rank=global_rank, seed=bucket_seed, res_dropout=res_dropout)
             del valid_ids
 
         if metadata_path:
