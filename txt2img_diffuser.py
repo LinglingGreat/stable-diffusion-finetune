@@ -1,6 +1,7 @@
 import torch
 from torch import autocast
-from diffusers import StableDiffusionPipeline, DDIMScheduler
+# from diffusers import StableDiffusionPipeline, DDIMScheduler
+from pipeline import StableDiffusionControlSafetyCheckPipeline as StableDiffusionPipeline
 import os
 
 def image_gen(prompt, postfix):
@@ -43,33 +44,33 @@ postfix = ""
 
 os.makedirs(output_path, exist_ok=True)
 
-pipe = StableDiffusionPipeline.from_pretrained(
-    model_id, use_auth_token=True
-)
-pipe = pipe.to(device)
-
-prompt = "a beautiful girl"
-# prompt = "a dog"
-prompt = "beautiful rapunzel, wedding dress, beautiful face, intricate, highly detailed, 8k, textured, sharp focus, art by artgerm and greg rutkowski and alphonse mucha"
-
-image_gen(prompt, postfix)
-
-# ckpt_path = "logs/2022-10-25T14-02-19_laionart-8gpu/trans"
-# output_path = "outputs/generated_laion_1025"
-# os.makedirs(output_path, exist_ok=True)
-# model_list = os.listdir(ckpt_path)
-
-# for model_name in model_list:
-#     postfix = model_name
-#     model_id = os.path.join(ckpt_path, model_name)
-#     pipe = StableDiffusionPipeline.from_pretrained(
+# pipe = StableDiffusionPipeline.from_pretrained(
 #     model_id, use_auth_token=True
-#     )
-#     pipe = pipe.to(device)
+# )
+# pipe = pipe.to(device)
 
-#     prompt = "a beautiful girl"
-#     # prompt = "a dog"
-#     prompt = "beautiful rapunzel, wedding dress, beautiful face, intricate, highly detailed, 8k, textured, sharp focus, art by artgerm and greg rutkowski and alphonse mucha"
+# prompt = "a beautiful girl"
+# # prompt = "a dog"
+# prompt = "beautiful rapunzel, wedding dress, beautiful face, intricate, highly detailed, 8k, textured, sharp focus, art by artgerm and greg rutkowski and alphonse mucha"
 
-#     image_gen(prompt, postfix)
+# image_gen(prompt, postfix)
+
+ckpt_path = "logs/2022-10-26T17-15-17_laionart-8gpu/trans"
+output_path = "outputs/generated_laion_1026"
+os.makedirs(output_path, exist_ok=True)
+model_list = os.listdir(ckpt_path)
+
+for model_name in model_list:
+    postfix = model_name
+    model_id = os.path.join(ckpt_path, model_name)
+    pipe = StableDiffusionPipeline.from_pretrained(
+    model_id, use_auth_token=True
+    )
+    pipe = pipe.to(device)
+
+    prompt = "a beautiful girl"
+    # prompt = "a dog"
+    prompt = "beautiful rapunzel, wedding dress, beautiful face, intricate, highly detailed, 8k, textured, sharp focus, art by artgerm and greg rutkowski and alphonse mucha"
+
+    image_gen(prompt, postfix)
 
