@@ -79,11 +79,11 @@ data:
     train:
       target: ldm.data.dataset.ShardedImageDataset
       params:
-        dataset_path: datasets/laionart_special_size
-        tags_db: datasets/laionart_special_size/db_tags_ranked.pkl
-        resolution_pkl: datasets/laionart_special_size/db_sizes.pkl
+        dataset_path: datasets/laionart_v2
+        tags_db: datasets/laionart_v2/db_tags_ranked.pkl
+        resolution_pkl: datasets/laionart_v2/db_sizes.pkl
         index_path: null
-        name: laionartsp
+        name: laionart
         shuffle: False
         threads: 8
         gas: 2

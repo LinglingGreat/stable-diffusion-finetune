@@ -10,8 +10,8 @@ import pickle
 import json
 
 data_dir = "/data/liling_ssdwork/laion2B-en/laion-1024"
-output_path = "datasets/laionart_special_size"
-name = "laionartsp"
+output_path = "datasets/laionart_v2"
+name = "laionart"
 
 bucket_path = output_path + "/db_sizes.pkl"
 tag_path = output_path + "/db_tags_ranked.pkl"
@@ -24,7 +24,7 @@ bucket_data = {}
 tag_data = {}
 all_image = []
 bucket_dict = {}
-for i in range(487):
+for i in range(808):
     folder = '0'*(5-len(str(i)))+str(i)
     folder_path = os.path.join(data_dir, folder)
     all_json = glob.glob(f'{data_dir}/{folder}/' + '*.json')
@@ -39,8 +39,8 @@ for i in range(487):
                 bucket_dict[k] = bucket_dict.get(k, 0) + 1
                 # if bucket_dict[k] >= 4000:
                 #     continue
-                if k in ["576_1024", "1024_576", "512_512"]:
-                    all_image.append(image_path)
+                # if k in ["576_1024", "1024_576", "512_512"]:
+                all_image.append(image_path)
 print(bucket_dict["576_1024"], bucket_dict["1024_576"], bucket_dict["512_512"])
 print(data_dir, len(all_image))
 
